@@ -3,8 +3,9 @@ var respond = require('../')
 
 http.createServer(function(req, res) {
   if (req.url == '/') {
-    res.writeHead(200, {'Content-Length': 4})
-    res.end('root')
+    var body = 'root'
+    res.writeHead(200, {'Content-Length': body.length})
+    res.end(body)
   };
   res.statusCode = 404
   res.end()
@@ -12,7 +13,7 @@ http.createServer(function(req, res) {
 
 var host = 'http://localhost:3232'
 
-describe('logger', function() {
+describe('respond.logger', function() {
 
   it('should show tiny format', function(done) {
     var app = respond()

@@ -9,7 +9,7 @@ http.createServer(function(req, res) {
 
 var host = 'http://localhost:3232'
 
-describe('cookieParser', function() {
+describe('respond.cookieParser', function() {
 
   it('should show tiny format', function(done) {
     var app = respond()
