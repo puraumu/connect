@@ -1,4 +1,3 @@
-
 /*!
  * Connect - logger
  * Copyright(c) 2010 Sencha Inc.
@@ -123,7 +122,7 @@ exports = module.exports = function logger(options) {
         realStream.write(buf.join(''), 'ascii');
         buf.length = 0;
       }
-    }, interval);
+    }, interval); 
 
     // swap the stream
     stream = {
@@ -143,11 +142,14 @@ exports = module.exports = function logger(options) {
       stream.write(line + '\n', 'ascii');
     // proxy end to output logging
     } else {
-      res.on('end', function() {
+      var end = res.end;
+      res.end = function(chunk, encoding){
+        res.end = end;
+        res.end(chunk, encoding);
         var line = fmt(exports, req, res);
         if (null == line) return;
         stream.write(line + '\n', 'ascii');
-      })
+      };
     }
 
 
@@ -224,7 +226,7 @@ exports.format('tiny', ':method :url :status :res[content-length] - :response-ti
 
 exports.format('dev', function(tokens, req, res){
   var status = res.statusCode
-    , len = parseInt(res.headers['content-length'], 10)
+    , len = parseInt(res.getHeader('Content-Length'), 10)
     , color = 32;
 
   if (status >= 500) color = 31
@@ -249,7 +251,7 @@ exports.format('dev', function(tokens, req, res){
  */
 
 exports.token('url', function(req){
-  return req.originalUrl;
+  return req.originalUrl || req.url;
 });
 
 /**
@@ -304,8 +306,8 @@ exports.token('remote-addr', function(req){
  * HTTP version
  */
 
-exports.token('http-version', function(req, res){
-  return res.httpVersionMajor + '.' + res.httpVersionMinor;
+exports.token('http-version', function(req){
+  return req.httpVersionMajor + '.' + req.httpVersionMinor;
 });
 
 /**
@@ -321,7 +323,7 @@ exports.token('user-agent', function(req){
  */
 
 exports.token('req', function(req, res, field){
-  return (req._headers || {})[field.toLowerCase()];
+  return req.headers[field.toLowerCase()];
 });
 
 /**
@@ -329,6 +331,6 @@ exports.token('req', function(req, res, field){
  */
 
 exports.token('res', function(req, res, field){
-  return res.headers[field.toLowerCase()];
+  return (res._headers || {})[field.toLowerCase()];
 });
 

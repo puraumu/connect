@@ -37,22 +37,22 @@ var utils = require('./../utils')
 
 module.exports = function cookieParser(secret){
   return function cookieParser(req, res, next) {
-    if (res.cookies) return next();
-    var cookies = res.headers['set-cookie'][0];
+    if (req.cookies) return next();
+    var cookies = req.headers.cookie;
 
-    res.secret = secret;
-    res.cookies = {};
-    res.signedCookies = {};
+    req.secret = secret;
+    req.cookies = {};
+    req.signedCookies = {};
 
     if (cookies) {
       try {
-        res.cookies = cookie.parse(cookies);
+        req.cookies = cookie.parse(cookies);
         if (secret) {
-          res.signedCookies = utils.parseSignedCookies(res.cookies, secret);
-          var obj = utils.parseJSONCookies(res.signedCookies);
-          res.signedCookies = obj;
+          req.signedCookies = utils.parseSignedCookies(req.cookies, secret);
+          var obj = utils.parseJSONCookies(req.signedCookies);
+          req.signedCookies = obj;
         }
-        res.cookies = utils.parseJSONCookies(res.cookies);
+        req.cookies = utils.parseJSONCookies(req.cookies);
       } catch (err) {
         return next(err);
       }
