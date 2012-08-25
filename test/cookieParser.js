@@ -1,72 +1,26 @@
+var respond = require('../')
+  , http = require('http')
 
-var connect = require('../')
-  , utils = connect.utils;
+http.createServer(function(req, res) {
+  var expires = new Date(0).toGMTString()
+  res.writeHead(200, {'Set-Cookie': ['foo=bar; path=/; expires=' + expires]})
+  res.end()
+}).listen(3232)
 
-var app = connect();
+var host = 'http://localhost:3232'
 
-app.use(connect.cookieParser('keyboard cat'));
+describe('cookieParser', function() {
 
-app.use(function(req, res, next){
-  if ('/signed' != req.url) return next();
-  res.end(JSON.stringify(req.signedCookies));
-});
-
-app.use(function(req, res, next){
-  res.end(JSON.stringify(req.cookies));
-});
-
-describe('connect.cookieParser()', function(){
-  describe('when no cookies are sent', function(){
-    it('should default req.cookies to {}', function(done){
-      app.request()
-      .get('/')
-      .expect('{}', done);
-    })
-
-    it('should default req.signedCookies to {}', function(done){
-      app.request()
-      .get('/')
-      .expect('{}', done);
-    })
+  it('should show tiny format', function(done) {
+    var app = respond()
+    app.use(respond.cookieParser())
+    app.request(host + '/', function(req, res) {
+      // console.log(res.headers['set-cookie']);
+      // console.log(res.cookies);
+      res.cookies.foo.should.eql('bar')
+      done()
+    }).end()
   })
 
-  describe('when cookies are sent', function(){
-    it('should populate req.cookies', function(done){
-      app.request()
-      .get('/')
-      .set('Cookie', 'foo=bar; bar=baz')
-      .expect('{"foo":"bar","bar":"baz"}', done);
-    })
-  })
-
-  describe('when a secret is given', function(){
-    var val = utils.sign('foobarbaz', 'keyboard cat');
-    // TODO: "bar" fails...
-
-    it('should populate req.signedCookies', function(done){
-      app.request()
-      .get('/signed')
-      .set('Cookie', 'foo=s:' + val)
-      .expect('{"foo":"foobarbaz"}', done);
-    })
-
-    it('should remove the signed value from req.cookies', function(done){
-      app.request()
-      .get('/')
-      .set('Cookie', 'foo=s:' + val)
-      .expect('{}', done);
-    })
-
-    it('should omit invalid signatures', function(done){
-      app.request()
-      .get('/signed')
-      .set('Cookie', 'foo=' + val + '3')
-      .expect('{}', function(){
-        app.request()
-        .get('/')
-        .set('Cookie', 'foo=' + val + '3')
-        .expect('{"foo":"foobarbaz.CP7AWaXDfAKIRfH49dQzKJx7sKzzSoPq7/AcBBRVwlI3"}', done);
-      });
-    })
-  })
 })
+
