@@ -1,4 +1,5 @@
 var respond = require('../')
+  , request = require('../../getter/superagent')
   , http = require('http')
 
 http.createServer(function(req, res) {
