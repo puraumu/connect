@@ -7,8 +7,10 @@ http.createServer(function(req, res) {
     res.writeHead(200, {'Content-Length': body.length})
     res.end(body)
   };
-  res.statusCode = 404
-  res.end()
+  setTimeout(function() {
+    res.statusCode = 404
+    res.end()
+  }, 10);
 }).listen(3232)
 
 var host = 'http://localhost:3232'
@@ -34,7 +36,7 @@ describe('respond.logger', function() {
   it('should show dev format', function(done) {
     var app = respond()
     app.use(respond.logger('dev'))
-    app.request(host + '/', function(req, res) {
+    app.request(host + '/foo', function(req, res) {
       done()
     }).end()
   })
