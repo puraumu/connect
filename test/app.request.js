@@ -10,12 +10,15 @@ var host = 'http://localhost:3230'
 
 describe('app.request', function() {
 
-  it('should', function(done) {
+  it('should catch response object', function(done) {
     var app = respond()
-    http.request(host + '/', app.use(function(req, res) {
+    app.use(function(req, res) {
       res.statusCode.should.eql(200)
       done()
-    })).end()
+    })
+    http.request(host + '/', function(res) {
+      app(res)
+    }).end()
   })
 
   it('should invoke http.request', function(done) {

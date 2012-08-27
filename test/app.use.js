@@ -18,5 +18,13 @@ describe('app.use', function() {
     app.stack.should.have.length(1)
   })
 
+  it('should catch response object', function(done) {
+    var app = respond()
+    http.request(host + '/', app.use(function(req, res) {
+      res.statusCode.should.eql(200)
+      done()
+    })).end()
+  })
+
 })
 
