@@ -4,9 +4,9 @@ var respond = require('../')
 http.createServer(function(req, res) {
   res.statusCode = 200
   res.end()
-}).listen(3232)
+}).listen(3235)
 
-var host = 'http://localhost:3232'
+var host = 'http://localhost:3235'
 
 describe('app.replace', function() {
 

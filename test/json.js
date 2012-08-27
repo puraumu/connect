@@ -4,9 +4,9 @@ var respond = require('../')
 http.createServer(function(req, res) {
   res.writeHead(200, {'Content-Type': 'application/json'})
   res.end('{"foo": "bar", "hoge": "hoge"}')
-}).listen(3232)
+}).listen(3234)
 
-var host = 'http://localhost:3232'
+var host = 'http://localhost:3234'
 
 describe('respond.json', function() {
 
