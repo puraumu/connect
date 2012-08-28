@@ -31,6 +31,7 @@ describe('respond.shrotname', function() {
       request(host + '/', function(err, res) {
         app(res)
         // console.log(res);
+        res.len.should.a('number')
         done()
       })
     })
